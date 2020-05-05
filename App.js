@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, FlatList, TextInput } from 'react-native';
+import { StyleSheet, View, FlatList, TextInput, ToastAndroid } from 'react-native';
 import { useFonts } from '@use-expo/font';
 import { AppLoading } from 'expo';
-import RegularText from './src/CustomText/RegularText';
 import BoldText from './src/CustomText/BoldText';
 import ListItem from './src/components/ListItem';
 
 const App = () => {
   const [inputValue, setInputValue] = useState('');
   const [testList, setTestList] = useState([]);
+  const [forceChange, setForceChange] = useState(true);
+
+  console.log(testList);
 
   const [fontsLoaded] = useFonts({
     'montserrat': require('./assets/fonts/Montserrat-Regular.ttf'),
@@ -26,15 +28,23 @@ const App = () => {
         <FlatList
             style={{width: '80%'}}
             data={testList}
-            renderItem={(position) => {
+            renderItem={position => {
               return (
-                <ListItem position={position} />
+                <ListItem position={position} editListItem={editListItem} />
               );
             }}
-            keyExtractor={(item) => item.id.toString()}
+            keyExtractor={item => item.id.toString()}
           />
       );
     }
+  }
+
+  const editListItem = (oldTitle, newTitle) => {
+    let tempArr = testList;
+    const itemId = tempArr.find(item => item.title === oldTitle).id;
+    tempArr.splice(itemId, 1, { id: itemId, title: newTitle });
+    setTestList(tempArr);
+    setForceChange(!forceChange);
   }
 
   if (!fontsLoaded) {
@@ -46,20 +56,24 @@ const App = () => {
         <TextInput
             value={inputValue}
             style={styles.input}
-            onChangeText={(text) => setInputValue(text)}
+            onChangeText={text => setInputValue(text)}
             onSubmitEditing={() => {
-              if (testList.length === 0) {
-                setTestList([{
-                  id: 0,
-                  title: inputValue
-                }]);
+              if (inputValue !== '') {
+                if (testList.length === 0) {
+                  setTestList([{
+                    id: 0,
+                    title: inputValue
+                  }]);
+                } else {
+                  setTestList([...testList, {
+                    id: testList[testList.length-1].id +1,
+                    title: inputValue
+                  }]);
+                }
+                setInputValue('');
               } else {
-                setTestList([...testList, {
-                  id: testList[testList.length-1].id +1,
-                  title: inputValue
-                }]);
+                ToastAndroid.show('Write something!', ToastAndroid.SHORT);
               }
-              setInputValue('');
             }}
           />
         {
@@ -85,7 +99,7 @@ const styles = StyleSheet.create({
   },
   input: {
     margin: 8,
-    paddingLeft: 4,
+    paddingLeft: 8,
     borderColor: '#1A237E',
     borderWidth: 1,
     borderRadius: 4,

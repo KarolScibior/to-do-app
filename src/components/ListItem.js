@@ -1,15 +1,41 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, CheckBox } from 'react-native';
+import { StyleSheet, View, CheckBox, TouchableOpacity } from 'react-native';
 import RegularText from '../CustomText/RegularText';
+import EditModal from './EditModal';
 
-const ListItem = (props) => {
+const ListItem = props => {
   const [isSelected, setSelection] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
 
-  const { position } = props;
+  const { position, editListItem } = props;
+
+  const renderItem = () => {
+    if (isSelected === false) {
+      return (
+        <TouchableOpacity
+          style={styles.textWrapper}
+          onPress={() => {
+            setModalVisible(true);
+          }}
+        >
+          <RegularText style={isSelected === false ? styles.itemTextActive : styles.itemTextDisabled} text ={position.item.title} />
+        </TouchableOpacity>
+      );
+    } else {
+      return (
+        <View style={styles.textWrapper}>
+          <RegularText style={isSelected === false ? styles.itemTextActive : styles.itemTextDisabled} text ={position.item.title} />
+        </View>
+      );
+    }
+  };
 
   return (
     <View style={styles.listItem}>
-      <RegularText style={isSelected === false ? styles.itemTextActive : styles.itemTextDisabled} text ={position.item.title} />
+      <EditModal modalVisible={modalVisible} setModalVisible={setModalVisible} text={position.item.title} editListItem={editListItem} />
+      {
+        renderItem()
+      }
       <CheckBox
         style={styles.checkbox}
         value={isSelected}
@@ -29,19 +55,20 @@ const styles = StyleSheet.create({
     //borderBottomColor: 'black',
     //borderBottomWidth: 1
   },
+  textWrapper: {
+    width: '80%'
+  },
   checkbox: {
     width: '20%',
     marginLeft: 16
   },
   itemTextActive: {
     color: '#1A237E',
-    fontSize: 16,
-    width: '80%'
+    fontSize: 16
   },
   itemTextDisabled: {
     color: 'grey',
     fontSize: 16,
-    width: '80%',
     textDecorationLine: 'line-through'
   }
 });
