@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, CheckBox, TouchableOpacity, Text } from 'react-native';
 import { useDispatch } from 'react-redux';
 import RegularText from './CustomText/RegularText';
@@ -6,13 +6,21 @@ import EditModal from './EditModal';
 import { actions } from '../redux/ducks';
 
 const ListItem = props => {
-  const [isSelected, setSelection] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
   const { position, setForceRender } = props;
 
+  const [isSelected, setIsSelected] = useState(false);
+
+  //console.log(position.item.title, isSelected)
+
   const dispatch = useDispatch();
   const deleteItem = itemTitle => dispatch(actions.deleteItem(itemTitle));
+  const setChecked = itemTitle => dispatch(actions.setChecked(itemTitle));
+
+  /* useEffect(() => {
+    setIsSelected(isChecked);
+  }, [isChecked]) */
 
   const renderItem = () => {
     if (isSelected === false) {
@@ -40,7 +48,10 @@ const ListItem = props => {
       <EditModal modalVisible={modalVisible} setModalVisible={setModalVisible} text={position.item.title} setForceRender={setForceRender} />
       <CheckBox
         value={isSelected}
-        onValueChange={setSelection}
+        onValueChange={() => {
+          setIsSelected(!isSelected);
+          setChecked(position.item.title);
+        }}
       />
       {
         renderItem()

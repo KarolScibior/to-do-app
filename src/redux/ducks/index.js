@@ -1,6 +1,8 @@
 export const ADD_ITEM = 'ADD_ITEM';
 export const DELETE_ITEM = 'DELETE_ITEM';
 export const EDIT_ITEM = 'EDIT_ITEM';
+export const SET_CHECKED = 'SET_CHECKED';
+export const DELETE_COMPLETED = 'DELETE_COMPLETED';
 
 export const actions = {
   addItem: itemTitle => ({
@@ -14,7 +16,12 @@ export const actions = {
   editItem: (oldTitle, newTitle) => ({
     type: EDIT_ITEM,
     payload: { oldTitle, newTitle }
-  })
+  }),
+  setChecked: itemTitle => ({
+    type: SET_CHECKED,
+    payload: itemTitle
+  }),
+  deleteCompleted: () => ({ type: DELETE_COMPLETED })
 };
 
 const initialState = {
@@ -32,14 +39,16 @@ export default rootReducer = (state = initialState, action) => {
           toDoCounter: 1,
           toDoList: [{
             id: 0,
-            title: newItemTitle
+            title: newItemTitle,
+            isChecked: false
           }]
         }
       } else {
         const newId = state.toDoList[state.toDoList.length - 1].id + 1;
         const newItem = {
           id: newId,
-          title: newItemTitle
+          title: newItemTitle,
+          isChecked: false
         };
         return {
           ...state,
@@ -60,7 +69,7 @@ export default rootReducer = (state = initialState, action) => {
         let tempList = state.toDoList;
         const itemId = tempList.find(item => item.title === title).id;
         tempList.splice(itemId, 1);
-        tempList = tempList.map((item, index) => { return { id: index, title: item.title} });
+        tempList = tempList.map((item, index) => { return { id: index, title: item.title, isChecked: item.isChecked} });
         return {
           ...state,
           toDoCounter: state.toDoCounter - 1,
@@ -71,13 +80,42 @@ export default rootReducer = (state = initialState, action) => {
     case EDIT_ITEM:
       const oldTitle = action.payload.oldTitle;
       const newTitle = action.payload.newTitle;
-      let tempList = state.toDoList;
-      const itemId = tempList.find(item => item.title === oldTitle).id;
-      tempList.splice(itemId, 1, { id: itemId, title: newTitle });
+      let tempeList = state.toDoList;
+      const itemId = tempeList.find(item => item.title === oldTitle).id;
+      const itemIsChecked = tempeList.find(item => item.title === oldTitle).isChecked;
+      tempeList.splice(itemId, 1, { id: itemId, title: newTitle, isChecked: itemIsChecked });
       return {
         ...state,
-        toDoList: tempList
+        toDoList: tempeList
       }
+
+      case SET_CHECKED:
+        const temp = action.payload;
+        let tempList = state.toDoList;
+        const itemeId = tempList.find(item => item.title === temp).id;
+        const itemeIsChecked = !tempList.find(item => item.title === temp).isChecked;
+        console.log('elo', itemeIsChecked);
+        tempList.splice(itemeId, 1, { id: itemeId, title: temp, isChecked: itemeIsChecked });
+        return {
+          ...state,
+          toDoList: tempList
+        }
+
+      case DELETE_COMPLETED:
+        let deletedList = state.toDoList;
+        deletedList = deletedList.filter(item => (item.isChecked === false));
+        deletedList = deletedList.map((item, index) => {
+          return {
+            id: index,
+            title: item.title,
+            isChecked: item.isChecked
+          }
+        });
+        return {
+          ...state,
+          toDoCounter: deletedList.length,
+          toDoList: deletedList
+        }
 
     default:
       return state;

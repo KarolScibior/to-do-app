@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import BoldText from './CustomText/BoldText';
 import ListItem from './ListItem';
 import { actions } from '../redux/ducks';
+import Counter from './Counter';
 
 const ListView = () => {
   const [inputValue, setInputValue] = useState('');
@@ -16,7 +17,8 @@ const ListView = () => {
   const dispatch = useDispatch();
   const addItem = itemTitle => dispatch(actions.addItem(itemTitle));
   const toDoList = useSelector(state => state.toDoList);
-  const toDoCounter = useSelector(state => state.toDoCounter);
+
+  console.log('lista: ', toDoList);
 
   const renderList = () => {
     if (toDoList.length === 0) {
@@ -58,6 +60,7 @@ const ListView = () => {
           {
             renderList()
           }
+          <Counter />
         </View>
   );
 }
