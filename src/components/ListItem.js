@@ -1,13 +1,18 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, CheckBox, TouchableOpacity, Text } from 'react-native';
-import RegularText from '../CustomText/RegularText';
+import { useDispatch } from 'react-redux';
+import RegularText from './CustomText/RegularText';
 import EditModal from './EditModal';
+import { actions } from '../redux/ducks';
 
 const ListItem = props => {
   const [isSelected, setSelection] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const { position, editListItem, deleteListItem } = props;
+  const { position, setForceRender } = props;
+
+  const dispatch = useDispatch();
+  const deleteItem = itemTitle => dispatch(actions.deleteItem(itemTitle));
 
   const renderItem = () => {
     if (isSelected === false) {
@@ -32,7 +37,7 @@ const ListItem = props => {
 
   return (
     <View style={styles.listItem}>
-      <EditModal modalVisible={modalVisible} setModalVisible={setModalVisible} text={position.item.title} editListItem={editListItem} />
+      <EditModal modalVisible={modalVisible} setModalVisible={setModalVisible} text={position.item.title} setForceRender={setForceRender} />
       <CheckBox
         value={isSelected}
         onValueChange={setSelection}
@@ -42,7 +47,7 @@ const ListItem = props => {
       }
       <TouchableOpacity
         onPress={() => {
-          deleteListItem(position.item.title)
+          deleteItem(position.item.title)
         }}
       >
         <Text style={styles.closingButton}>×</Text>

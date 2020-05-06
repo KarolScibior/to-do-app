@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, TextInput, Modal, TouchableOpacity, Text, ToastAndroid } from 'react-native';
-import BoldText from '../CustomText/BoldText';
+import BoldText from './CustomText/BoldText';
+import { useDispatch } from 'react-redux';
+import { actions } from '../redux/ducks';
 
 const EditModal = props => {
-  const { modalVisible, setModalVisible, text, editListItem } = props;
-
   const [inputValue, setInputValue] = useState(text);
+
+  const { modalVisible, setModalVisible, text, setForceRender } = props;
+
+  const dispatch = useDispatch();
+  const editItem = (oldTitle, newTitle) => dispatch(actions.editItem(oldTitle, newTitle));
 
   useEffect(() => {
     setInputValue(text);
@@ -35,7 +40,8 @@ const EditModal = props => {
               onChangeText={text => setInputValue(text)}
               onSubmitEditing={() => {
                 if (inputValue !== '') {
-                  editListItem(text, inputValue);
+                  editItem(text, inputValue);
+                  setForceRender();
                   setModalVisible(false);
                 } else {
                   ToastAndroid.show('Write something!', ToastAndroid.SHORT);
