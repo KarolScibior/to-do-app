@@ -10,8 +10,6 @@ const App = () => {
   const [testList, setTestList] = useState([]);
   const [forceChange, setForceChange] = useState(true);
 
-  console.log(testList);
-
   const [fontsLoaded] = useFonts({
     'montserrat': require('./assets/fonts/Montserrat-Regular.ttf'),
     'montserratBold': require('./assets/fonts/Montserrat-Bold.ttf'),
@@ -30,7 +28,7 @@ const App = () => {
             data={testList}
             renderItem={position => {
               return (
-                <ListItem position={position} editListItem={editListItem} />
+                <ListItem position={position} editListItem={editListItem} deleteListItem={deleteListItem} />
               );
             }}
             keyExtractor={item => item.id.toString()}
@@ -45,6 +43,20 @@ const App = () => {
     tempArr.splice(itemId, 1, { id: itemId, title: newTitle });
     setTestList(tempArr);
     setForceChange(!forceChange);
+  }
+
+  const deleteListItem = text => {
+    if (testList.length === 1) {
+      setTestList([]);
+      setForceChange(!forceChange);
+    } else {
+      let tempArr = testList;
+      const itemId = tempArr.find(item => item.title === text).id;
+      tempArr.splice(itemId, 1);
+      tempArr = tempArr.map((item, index) => { return { id: index, title: item.title} });
+      setTestList(tempArr);
+      setForceChange(!forceChange);
+    }
   }
 
   if (!fontsLoaded) {

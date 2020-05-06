@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, CheckBox, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, CheckBox, TouchableOpacity, Text } from 'react-native';
 import RegularText from '../CustomText/RegularText';
 import EditModal from './EditModal';
 
@@ -7,7 +7,7 @@ const ListItem = props => {
   const [isSelected, setSelection] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const { position, editListItem } = props;
+  const { position, editListItem, deleteListItem } = props;
 
   const renderItem = () => {
     if (isSelected === false) {
@@ -33,14 +33,20 @@ const ListItem = props => {
   return (
     <View style={styles.listItem}>
       <EditModal modalVisible={modalVisible} setModalVisible={setModalVisible} text={position.item.title} editListItem={editListItem} />
-      {
-        renderItem()
-      }
       <CheckBox
-        style={styles.checkbox}
         value={isSelected}
         onValueChange={setSelection}
       />
+      {
+        renderItem()
+      }
+      <TouchableOpacity
+        onPress={() => {
+          deleteListItem(position.item.title)
+        }}
+      >
+        <Text style={styles.closingButton}>×</Text>
+      </TouchableOpacity>
     </View>
   )
 };
@@ -50,17 +56,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    width: '100%',
-    margin: 4,
-    //borderBottomColor: 'black',
-    //borderBottomWidth: 1
+    //width: '100%',
+    marginTop: 4,
+    //borderColor: 'black',
+    //borderWidth: 1
   },
   textWrapper: {
-    width: '80%'
-  },
-  checkbox: {
-    width: '20%',
-    marginLeft: 16
+    width: '80%',
+    //borderColor: 'black',
+    //borderWidth: 1
   },
   itemTextActive: {
     color: '#1A237E',
@@ -70,7 +74,11 @@ const styles = StyleSheet.create({
     color: 'grey',
     fontSize: 16,
     textDecorationLine: 'line-through'
-  }
+  },
+  closingButton: {
+    fontSize: 24,
+    textAlign: 'right'
+  },
 });
 
 export default ListItem;
