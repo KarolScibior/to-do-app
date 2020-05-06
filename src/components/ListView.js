@@ -18,8 +18,6 @@ const ListView = () => {
   const toDoList = useSelector(state => state.toDoList);
   const toDoCounter = useSelector(state => state.toDoCounter);
 
-  console.log(toDoCounter);
-
   const renderList = () => {
     if (toDoList.length === 0) {
       return (
