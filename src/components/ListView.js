@@ -18,8 +18,6 @@ const ListView = () => {
   const addItem = itemTitle => dispatch(actions.addItem(itemTitle));
   const toDoList = useSelector(state => state.toDoList);
 
-  console.log('lista: ', toDoList);
-
   const renderList = () => {
     if (toDoList.length === 0) {
       return (

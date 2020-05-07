@@ -8,12 +8,14 @@ import { actions } from '../redux/ducks';
 const Counter = () => {
   const dispatch = useDispatch();
   const deleteCompleted = () => dispatch(actions.deleteCompleted());
+  const resetCheckbox = () => dispatch(actions.resetCheckbox());
   const counter = useSelector(state => state.toDoCounter);
 
   return (
     <View style={styles.container}>
       <RegularText styles={styles.color} text={`Counter: ${counter}`}/>
       <TouchableOpacity onPress={() => {
+        resetCheckbox();
         deleteCompleted();
       }}>
         <BoldText styles={styles.color} text={'DELETE COMPLETED'} />

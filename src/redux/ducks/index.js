@@ -3,6 +3,7 @@ export const DELETE_ITEM = 'DELETE_ITEM';
 export const EDIT_ITEM = 'EDIT_ITEM';
 export const SET_CHECKED = 'SET_CHECKED';
 export const DELETE_COMPLETED = 'DELETE_COMPLETED';
+export const RESET_CHECKBOX = 'RESET_CHECKBOX';
 
 export const actions = {
   addItem: itemTitle => ({
@@ -21,12 +22,14 @@ export const actions = {
     type: SET_CHECKED,
     payload: itemTitle
   }),
-  deleteCompleted: () => ({ type: DELETE_COMPLETED })
+  deleteCompleted: () => ({ type: DELETE_COMPLETED }),
+  resetCheckbox: () => ({ type: RESET_CHECKBOX })
 };
 
 const initialState = {
   toDoList: [],
-  toDoCounter: 0
+  toDoCounter: 0,
+  resetCheckbox: false
 };
 
 export default rootReducer = (state = initialState, action) => {
@@ -94,7 +97,6 @@ export default rootReducer = (state = initialState, action) => {
         let tempList = state.toDoList;
         const itemeId = tempList.find(item => item.title === temp).id;
         const itemeIsChecked = !tempList.find(item => item.title === temp).isChecked;
-        console.log('elo', itemeIsChecked);
         tempList.splice(itemeId, 1, { id: itemeId, title: temp, isChecked: itemeIsChecked });
         return {
           ...state,
@@ -115,6 +117,12 @@ export default rootReducer = (state = initialState, action) => {
           ...state,
           toDoCounter: deletedList.length,
           toDoList: deletedList
+        }
+
+      case RESET_CHECKBOX:
+        return {
+          ...state,
+          resetCheckbox: !state.resetCheckbox
         }
 
     default:
